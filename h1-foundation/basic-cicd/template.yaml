@@ -1,0 +1,70 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: h1-basic-cicd
+  title: "H1: Basic CI/CD Pipeline"
+  description: |
+    Create a GitHub Actions CI/CD pipeline with build, test, security scan,
+    and deployment stages for your application.
+  tags: [cicd, github-actions, pipeline, h1-foundation]
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  owner: platform-team
+  type: cicd-pipeline
+  parameters:
+    - title: Pipeline Configuration
+      required: [name, owner, language]
+      properties:
+        name:
+          title: Project Name
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+        owner:
+          title: Owner Team
+          type: string
+          ui:field: OwnerPicker
+        language:
+          title: Language
+          type: string
+          enum: [python, nodejs, java, dotnet, go]
+          default: python
+        enableSecurityScan:
+          title: Enable Security Scanning
+          type: boolean
+          default: true
+        enableContainerBuild:
+          title: Build Container Image
+          type: boolean
+          default: true
+  steps:
+    - id: fetch-skeleton
+      name: Fetch CI/CD Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+          language: ${{ parameters.language }}
+          enableSecurityScan: ${{ parameters.enableSecurityScan }}
+          enableContainerBuild: ${{ parameters.enableContainerBuild }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: "CI/CD pipeline for ${{ parameters.name }}"
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Catalog Entry
+        entityRef: ${{ steps.register.output.entityRef }}

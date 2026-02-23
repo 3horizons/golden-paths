@@ -1,0 +1,60 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: h1-security-baseline
+  title: "H1: Security Baseline"
+  description: |
+    Create a security baseline configuration with Azure Policy assignments,
+    NSG rules, Key Vault setup, and compliance guardrails.
+  tags: [security, azure, compliance, h1-foundation]
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  owner: platform-team
+  type: security-config
+  parameters:
+    - title: Security Baseline Configuration
+      required: [name, owner]
+      properties:
+        name:
+          title: Project Name
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+        owner:
+          title: Owner Team
+          type: string
+          ui:field: OwnerPicker
+        complianceFramework:
+          title: Compliance Framework
+          type: string
+          enum: [cis, nist, pci-dss, hipaa, soc2]
+          default: cis
+  steps:
+    - id: fetch-skeleton
+      name: Fetch Security Baseline
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+          complianceFramework: ${{ parameters.complianceFramework }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: "Security baseline for ${{ parameters.name }}"
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}-security
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Catalog Entry
+        entityRef: ${{ steps.register.output.entityRef }}
