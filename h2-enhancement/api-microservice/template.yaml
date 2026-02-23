@@ -1,0 +1,90 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: h2-api-microservice
+  title: "H2: API Microservice with Database"
+  description: |
+    Create a production-ready API microservice with PostgreSQL database,
+    Redis caching, OpenAPI documentation, and full observability stack.
+    Includes FastAPI/Express/Spring Boot, GitHub Actions CI/CD, and ArgoCD deployment.
+  tags: [api, microservice, postgresql, redis, h2-enhancement, recommended]
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  owner: platform-team
+  type: service
+  parameters:
+    - title: Application Information
+      required: [name, owner]
+      properties:
+        name:
+          title: Service Name
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+        owner:
+          title: Owner Team
+          type: string
+          ui:field: OwnerPicker
+    - title: Technology Stack
+      required: [language]
+      properties:
+        language:
+          title: Language
+          type: string
+          enum: [python-fastapi, nodejs-express, java-spring, go-gin]
+          enumNames: ["Python (FastAPI)", "Node.js (Express)", "Java (Spring Boot)", "Go (Gin)"]
+          default: python-fastapi
+        enableDatabase:
+          title: Enable PostgreSQL
+          type: boolean
+          default: true
+        enableRedis:
+          title: Enable Redis
+          type: boolean
+          default: true
+    - title: Deployment
+      properties:
+        environments:
+          title: Environments
+          type: array
+          items:
+            type: string
+            enum: [dev, staging, prod]
+          default: [dev, staging, prod]
+          ui:widget: checkboxes
+  steps:
+    - id: fetch-skeleton
+      name: Fetch API Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          language: ${{ parameters.language }}
+          enableDatabase: ${{ parameters.enableDatabase }}
+          enableRedis: ${{ parameters.enableRedis }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: ${{ parameters.description }}
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Catalog Entry
+        entityRef: ${{ steps.register.output.entityRef }}
