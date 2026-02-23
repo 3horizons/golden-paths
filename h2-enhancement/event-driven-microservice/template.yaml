@@ -1,0 +1,64 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: h2-event-driven-microservice
+  title: "H2: Event-Driven Microservice"
+  description: |
+    Create an event-driven microservice with Kafka/Event Hub consumers,
+    dead letter queues, and distributed tracing.
+  tags: [event-driven, kafka, async, h2-enhancement]
+spec:
+  owner: platform-team
+  type: service
+  parameters:
+    - title: Event-Driven Service Configuration
+      required: [name, owner]
+      properties:
+        name:
+          title: Service Name
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+        owner:
+          title: Owner Team
+          type: string
+          ui:field: OwnerPicker
+        messageBroker:
+          title: Message Broker
+          type: string
+          enum: [kafka, azure-event-hub, azure-service-bus, rabbitmq]
+          default: kafka
+        language:
+          title: Language
+          type: string
+          enum: [python, nodejs, java, go]
+          default: python
+  steps:
+    - id: fetch-skeleton
+      name: Fetch Event-Driven Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+          messageBroker: ${{ parameters.messageBroker }}
+          language: ${{ parameters.language }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: "Event-driven service - ${{ parameters.name }}"
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Catalog Entry
+        entityRef: ${{ steps.register.output.entityRef }}

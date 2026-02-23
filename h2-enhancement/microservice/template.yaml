@@ -1,0 +1,58 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: h2-microservice
+  title: "H2: Production Microservice"
+  description: |
+    Create a production-ready microservice with full observability,
+    health checks, Docker containerization, and ArgoCD deployment.
+  tags: [microservice, python, docker, h2-enhancement]
+spec:
+  owner: platform-team
+  type: service
+  parameters:
+    - title: Microservice Configuration
+      required: [name, owner]
+      properties:
+        name:
+          title: Service Name
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+        owner:
+          title: Owner Team
+          type: string
+          ui:field: OwnerPicker
+        language:
+          title: Language
+          type: string
+          enum: [python-fastapi, nodejs-express, java-spring, go-gin]
+          default: python-fastapi
+  steps:
+    - id: fetch-skeleton
+      name: Fetch Microservice Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+          language: ${{ parameters.language }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: "Microservice - ${{ parameters.name }}"
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Catalog Entry
+        entityRef: ${{ steps.register.output.entityRef }}

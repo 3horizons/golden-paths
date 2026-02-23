@@ -1,0 +1,64 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: h2-data-pipeline
+  title: "H2: Data Pipeline"
+  description: |
+    Create a data pipeline with Azure Data services, PySpark,
+    data quality checks, and monitoring.
+  tags: [data, pipeline, azure, pyspark, h2-enhancement]
+spec:
+  owner: platform-team
+  type: data-pipeline
+  parameters:
+    - title: Data Pipeline Configuration
+      required: [name, owner]
+      properties:
+        name:
+          title: Pipeline Name
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+        owner:
+          title: Owner Team
+          type: string
+          ui:field: OwnerPicker
+        pipelineType:
+          title: Pipeline Type
+          type: string
+          enum: [batch, streaming, hybrid]
+          default: batch
+        dataSource:
+          title: Primary Data Source
+          type: string
+          enum: [azure-blob, azure-sql, event-hub, cosmos-db]
+          default: azure-blob
+  steps:
+    - id: fetch-skeleton
+      name: Fetch Pipeline Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+          pipelineType: ${{ parameters.pipelineType }}
+          dataSource: ${{ parameters.dataSource }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: "Data pipeline - ${{ parameters.name }}"
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Catalog Entry
+        entityRef: ${{ steps.register.output.entityRef }}

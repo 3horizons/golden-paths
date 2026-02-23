@@ -1,0 +1,64 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: h2-batch-job
+  title: "H2: Batch Processing Job"
+  description: |
+    Create a scheduled batch processing job with retry logic,
+    dead letter queues, and monitoring.
+  tags: [batch, scheduled, processing, h2-enhancement]
+spec:
+  owner: platform-team
+  type: batch-job
+  parameters:
+    - title: Batch Job Configuration
+      required: [name, owner]
+      properties:
+        name:
+          title: Job Name
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+        owner:
+          title: Owner Team
+          type: string
+          ui:field: OwnerPicker
+        schedule:
+          title: Schedule (cron)
+          type: string
+          default: "0 2 * * *"
+          description: Cron expression for job scheduling
+        language:
+          title: Language
+          type: string
+          enum: [python, nodejs, java]
+          default: python
+  steps:
+    - id: fetch-skeleton
+      name: Fetch Batch Job Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+          schedule: ${{ parameters.schedule }}
+          language: ${{ parameters.language }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: "Batch job - ${{ parameters.name }}"
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Catalog Entry
+        entityRef: ${{ steps.register.output.entityRef }}

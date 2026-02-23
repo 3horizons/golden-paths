@@ -1,0 +1,67 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: h2-gitops-deployment
+  title: "H2: GitOps Deployment Config"
+  description: |
+    Create ArgoCD GitOps deployment configuration with Kustomize overlays
+    for dev, staging, and production environments.
+  tags: [gitops, argocd, kustomize, h2-enhancement]
+spec:
+  owner: platform-team
+  type: gitops-config
+  parameters:
+    - title: GitOps Configuration
+      required: [name, owner]
+      properties:
+        name:
+          title: Application Name
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+        owner:
+          title: Owner Team
+          type: string
+          ui:field: OwnerPicker
+        environments:
+          title: Target Environments
+          type: array
+          items:
+            type: string
+            enum: [dev, staging, prod]
+          uniqueItems: true
+          default: [dev, staging, prod]
+          ui:widget: checkboxes
+        syncPolicy:
+          title: Auto Sync
+          type: boolean
+          default: true
+  steps:
+    - id: fetch-skeleton
+      name: Fetch GitOps Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+          environments: ${{ parameters.environments }}
+          syncPolicy: ${{ parameters.syncPolicy }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: "GitOps config for ${{ parameters.name }}"
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}-gitops
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Catalog Entry
+        entityRef: ${{ steps.register.output.entityRef }}

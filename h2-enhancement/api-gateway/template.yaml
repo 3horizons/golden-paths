@@ -1,0 +1,62 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: h2-api-gateway
+  title: "H2: API Gateway"
+  description: |
+    Create an API Gateway with rate limiting, authentication,
+    request routing, and observability.
+  tags: [api-gateway, routing, auth, h2-enhancement]
+spec:
+  owner: platform-team
+  type: api-gateway
+  parameters:
+    - title: API Gateway Configuration
+      required: [name, owner]
+      properties:
+        name:
+          title: Gateway Name
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+        owner:
+          title: Owner Team
+          type: string
+          ui:field: OwnerPicker
+        enableRateLimiting:
+          title: Enable Rate Limiting
+          type: boolean
+          default: true
+        enableAuth:
+          title: Enable Authentication
+          type: boolean
+          default: true
+  steps:
+    - id: fetch-skeleton
+      name: Fetch Gateway Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+          enableRateLimiting: ${{ parameters.enableRateLimiting }}
+          enableAuth: ${{ parameters.enableAuth }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: "API Gateway - ${{ parameters.name }}"
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Catalog Entry
+        entityRef: ${{ steps.register.output.entityRef }}
