@@ -1,0 +1,25 @@
+{
+  "name": "Web Application",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "features": {
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-azuretools.vscode-docker",
+        "github.copilot"
+      ]
+    }
+  },
+  "postCreateCommand": "npm ci",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "Dev Server", "onAutoForward": "openBrowser" }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "Batch Job",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "redhat.vscode-yaml",
+        "github.copilot"
+      ]
+    }
+  },
+  "postCreateCommand": "pip install -r requirements.txt || true"
+}

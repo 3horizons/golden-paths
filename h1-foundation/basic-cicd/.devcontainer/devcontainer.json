@@ -1,0 +1,19 @@
+{
+  "name": "Basic CI/CD",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/azure-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "redhat.vscode-yaml",
+        "me-dutour-mathieu.vscode-github-actions",
+        "ms-azuretools.vscode-docker",
+        "github.copilot"
+      ]
+    }
+  }
+}

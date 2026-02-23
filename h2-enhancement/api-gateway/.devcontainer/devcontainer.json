@@ -1,0 +1,23 @@
+{
+  "name": "API Gateway",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "features": {
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker",
+        "github.copilot"
+      ]
+    }
+  },
+  "postCreateCommand": "npm ci || true",
+  "forwardPorts": [3000, 8080]
+}

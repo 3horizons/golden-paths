@@ -1,0 +1,19 @@
+{
+  "name": "Security Baseline",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/terraform:1": { "version": "1.7" },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.terraform",
+        "redhat.vscode-yaml",
+        "github.copilot"
+      ]
+    }
+  },
+  "postCreateCommand": "echo 'Install tfsec and trivy' && curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash"
+}

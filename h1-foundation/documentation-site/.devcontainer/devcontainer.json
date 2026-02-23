@@ -1,0 +1,22 @@
+{
+  "name": "Documentation Site",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "yzhang.markdown-all-in-one",
+        "DavidAnson.vscode-markdownlint",
+        "redhat.vscode-yaml",
+        "github.copilot"
+      ]
+    }
+  },
+  "postCreateCommand": "pip install mkdocs-techdocs-core",
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": { "label": "MkDocs", "onAutoForward": "openBrowser" }
+  }
+}

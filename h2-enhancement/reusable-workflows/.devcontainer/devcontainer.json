@@ -1,0 +1,17 @@
+{
+  "name": "Reusable Workflows",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "redhat.vscode-yaml",
+        "me-dutour-mathieu.vscode-github-actions",
+        "github.copilot"
+      ]
+    }
+  }
+}
