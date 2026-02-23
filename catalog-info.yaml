@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: golden-paths-templates
+  description: Golden Path templates for H1 Foundation and H2 Enhancement
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: url
+  targets:
+    # -- H1 Foundation --
+    - ./h1-foundation/security-baseline/template.yaml
+    - ./h1-foundation/documentation-site/template.yaml
+    - ./h1-foundation/basic-cicd/template.yaml
+    - ./h1-foundation/infrastructure-provisioning/template.yaml
+    - ./h1-foundation/web-application/template.yaml
+    # -- H2 Enhancement --
+    - ./h2-enhancement/api-microservice/template.yaml
+    - ./h2-enhancement/microservice/template.yaml
+    - ./h2-enhancement/api-gateway/template.yaml
+    - ./h2-enhancement/batch-job/template.yaml
+    - ./h2-enhancement/data-pipeline/template.yaml
+    - ./h2-enhancement/event-driven-microservice/template.yaml
+    - ./h2-enhancement/gitops-deployment/template.yaml
+    - ./h2-enhancement/reusable-workflows/template.yaml
+    - ./h2-enhancement/ado-to-github-migration/template.yaml
