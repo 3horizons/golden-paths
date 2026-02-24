@@ -30,6 +30,9 @@ spec:
         title: Owner Team
         type: string
         ui:field: OwnerPicker
+        ui:options:
+          catalogFilter:
+            kind: Group
       messageBroker:
         title: Message Broker
         type: string

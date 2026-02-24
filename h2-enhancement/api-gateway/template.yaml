@@ -30,6 +30,9 @@ spec:
         title: Owner Team
         type: string
         ui:field: OwnerPicker
+        ui:options:
+          catalogFilter:
+            kind: Group
       enableRateLimiting:
         title: Enable Rate Limiting
         type: boolean

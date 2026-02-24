@@ -31,6 +31,9 @@ spec:
         title: Owner Team
         type: string
         ui:field: OwnerPicker
+        ui:options:
+          catalogFilter:
+            kind: Group
       pipelineType:
         title: Pipeline Type
         type: string

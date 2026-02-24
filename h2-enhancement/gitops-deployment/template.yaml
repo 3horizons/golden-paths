@@ -30,6 +30,9 @@ spec:
         title: Owner Team
         type: string
         ui:field: OwnerPicker
+        ui:options:
+          catalogFilter:
+            kind: Group
       environments:
         title: Target Environments
         type: array
