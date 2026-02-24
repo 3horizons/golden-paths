@@ -8,6 +8,8 @@ metadata:
 spec:
   type: url
   targets:
+    # -- Organization Structure --
+    - ./org.yaml
     # -- H1 Foundation --
     - ./h1-foundation/security-baseline/template.yaml
     - ./h1-foundation/documentation-site/template.yaml
