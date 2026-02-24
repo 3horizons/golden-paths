@@ -11,15 +11,16 @@ metadata:
   annotations:
     backstage.io/techdocs-ref: dir:.
 spec:
-  owner: platform-team
+  owner: group:backend-engineering
   type: service
   parameters:
     - title: Application Information
-      required: [name, owner]
+      required: [name, owner, description]
       properties:
         name:
           title: Service Name
           type: string
+          description: Unique name (lowercase, hyphens allowed)
           pattern: "^[a-z][a-z0-9-]*$"
           ui:autofocus: true
         description:
@@ -29,6 +30,10 @@ spec:
           title: Owner Team
           type: string
           ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
+
     - title: Technology Stack
       required: [language]
       properties:
@@ -46,16 +51,42 @@ spec:
           title: Enable Redis
           type: boolean
           default: true
-    - title: Deployment
+
+    - title: Environment & Deployment
+      required: [environment]
       properties:
-        environments:
-          title: Environments
-          type: array
-          items:
-            type: string
-            enum: [dev, staging, prod]
-          default: [dev, staging, prod]
-          ui:widget: checkboxes
+        environment:
+          title: Target Environment
+          type: string
+          description: Which environment to deploy to
+          enum: [dev, qa, prod]
+          enumNames: ["Development", "QA / Staging", "Production"]
+          default: dev
+        azureSubscription:
+          title: Azure Subscription ID
+          type: string
+          description: Required for infrastructure provisioning (leave empty for local)
+        azureRegion:
+          title: Azure Region
+          type: string
+          enum: [centralus, eastus]
+          enumNames: ["Central US", "East US"]
+          default: centralus
+        enableArgoCD:
+          title: Enable ArgoCD GitOps
+          type: boolean
+          default: true
+
+    - title: Repository Settings
+      required: [repoUrl]
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts: ['github.com']
+
   steps:
     - id: fetch-skeleton
       name: Fetch API Skeleton
@@ -69,22 +100,34 @@ spec:
           language: ${{ parameters.language }}
           enableDatabase: ${{ parameters.enableDatabase }}
           enableRedis: ${{ parameters.enableRedis }}
+          environment: ${{ parameters.environment }}
+          azureRegion: ${{ parameters.azureRegion }}
+
     - id: publish
       name: Publish to GitHub
       action: publish:github
       input:
         allowedHosts: ['github.com']
         description: ${{ parameters.description }}
-        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
+        defaultBranch: main
+        repoVisibility: private
+
     - id: register
       name: Register in Catalog
       action: catalog:register
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: /catalog-info.yaml
+
   output:
     links:
       - title: Repository
         url: ${{ steps.publish.output.remoteUrl }}
-      - title: Catalog Entry
+        icon: github
+      - title: Open in Catalog
         entityRef: ${{ steps.register.output.entityRef }}
+        icon: catalog
+      - title: Open in Codespaces
+        url: ${{ steps.publish.output.remoteUrl }}/codespaces/new
+        icon: code
