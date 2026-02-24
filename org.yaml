@@ -1,0 +1,120 @@
+# =============================================================================
+# Organization Structure for Developer Portal
+# =============================================================================
+# Groups and users for the Agentic DevOps Platform.
+# Registered automatically in the Backstage/RHDH catalog.
+# =============================================================================
+
+# --- Root Organization ---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: engineering
+  description: Engineering Organization
+spec:
+  type: organization
+  children:
+    - platform-engineering
+    - backend-engineering
+    - frontend-engineering
+    - data-engineering
+    - devops-engineering
+    - ai-engineering
+    - documentation-team
+    - sre-team
+
+---
+# --- Platform Engineering ---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-engineering
+  description: Platform Engineering - IDP, Golden Paths, infrastructure, security baselines
+spec:
+  type: team
+  parent: engineering
+  children: []
+
+---
+# --- Backend Engineering ---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: backend-engineering
+  description: Backend Engineering - APIs, microservices, event-driven systems
+spec:
+  type: team
+  parent: engineering
+  children: []
+
+---
+# --- Frontend Engineering ---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: frontend-engineering
+  description: Frontend Engineering - Web applications, UX, React/Angular
+spec:
+  type: team
+  parent: engineering
+  children: []
+
+---
+# --- Data Engineering ---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: data-engineering
+  description: Data Engineering - Pipelines, ETL, analytics, data quality
+spec:
+  type: team
+  parent: engineering
+  children: []
+
+---
+# --- DevOps Engineering ---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: devops-engineering
+  description: DevOps Engineering - CI/CD, GitOps, migrations, automation
+spec:
+  type: team
+  parent: engineering
+  children: []
+
+---
+# --- AI Engineering ---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: ai-engineering
+  description: AI Engineering - AI agents, RAG, MLOps, multi-agent systems
+spec:
+  type: team
+  parent: engineering
+  children: []
+
+---
+# --- Documentation Team ---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: documentation-team
+  description: Documentation Team - TechDocs, knowledge base, API docs
+spec:
+  type: team
+  parent: engineering
+  children: []
+
+---
+# --- SRE Team ---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: sre-team
+  description: Site Reliability Engineering - Monitoring, incident response, SLOs
+spec:
+  type: team
+  parent: engineering
+  children: []
