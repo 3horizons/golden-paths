@@ -2,61 +2,115 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: h2-api-gateway
-  title: "H2: API Gateway"
-  description: |
-    Create an API Gateway with rate limiting, authentication,
+  title: 'H2: API Gateway'
+  description: 'Create an API Gateway with rate limiting, authentication,
+
     request routing, and observability.
-  tags: [api-gateway, routing, auth, h2-enhancement]
+
+    '
+  tags:
+  - api-gateway
+  - routing
+  - auth
+  - h2-enhancement
 spec:
-  owner: platform-team
+  owner: group:backend-engineering
   type: api-gateway
   parameters:
-    - title: API Gateway Configuration
-      required: [name, owner]
-      properties:
-        name:
-          title: Gateway Name
-          type: string
-          pattern: "^[a-z][a-z0-9-]*$"
-        owner:
-          title: Owner Team
-          type: string
-          ui:field: OwnerPicker
-        enableRateLimiting:
-          title: Enable Rate Limiting
-          type: boolean
-          default: true
-        enableAuth:
-          title: Enable Authentication
-          type: boolean
-          default: true
+  - title: API Gateway Configuration
+    required:
+    - name
+    - owner
+    properties:
+      name:
+        title: Gateway Name
+        type: string
+        pattern: ^[a-z][a-z0-9-]*$
+      owner:
+        title: Owner Team
+        type: string
+        ui:field: OwnerPicker
+      enableRateLimiting:
+        title: Enable Rate Limiting
+        type: boolean
+        default: true
+      enableAuth:
+        title: Enable Authentication
+        type: boolean
+        default: true
+  - title: Environment & Deployment
+    required:
+    - environment
+    properties:
+      environment:
+        title: Target Environment
+        type: string
+        description: Which environment to deploy to
+        enum:
+        - dev
+        - qa
+        - prod
+        enumNames:
+        - Development
+        - QA / Staging
+        - Production
+        default: dev
+      azureSubscription:
+        title: Azure Subscription ID
+        type: string
+        description: Required for infrastructure provisioning (leave empty for local)
+      azureRegion:
+        title: Azure Region
+        type: string
+        enum:
+        - centralus
+        - eastus
+        enumNames:
+        - Central US
+        - East US
+        default: centralus
+  - title: Repository Settings
+    required:
+    - repoUrl
+    properties:
+      repoUrl:
+        title: Repository Location
+        type: string
+        ui:field: RepoUrlPicker
+        ui:options:
+          allowedHosts:
+          - github.com
   steps:
-    - id: fetch-skeleton
-      name: Fetch Gateway Skeleton
-      action: fetch:template
-      input:
-        url: ./skeleton
-        values:
-          name: ${{ parameters.name }}
-          owner: ${{ parameters.owner }}
-          enableRateLimiting: ${{ parameters.enableRateLimiting }}
-          enableAuth: ${{ parameters.enableAuth }}
-    - id: publish
-      name: Publish to GitHub
-      action: publish:github
-      input:
-        allowedHosts: ['github.com']
-        description: "API Gateway - ${{ parameters.name }}"
-        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
-    - id: register
-      name: Register in Catalog
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: /catalog-info.yaml
+  - id: fetch-skeleton
+    name: Fetch Gateway Skeleton
+    action: fetch:template
+    input:
+      url: ./skeleton
+      values:
+        name: ${{ parameters.name }}
+        owner: ${{ parameters.owner }}
+        enableRateLimiting: ${{ parameters.enableRateLimiting }}
+        enableAuth: ${{ parameters.enableAuth }}
+  - id: publish
+    name: Publish to GitHub
+    action: publish:github
+    input:
+      description: API Gateway - ${{ parameters.name }}
+      repoUrl: ${{ parameters.repoUrl }}
+      defaultBranch: main
+      repoVisibility: private
+  - id: register
+    name: Register in Catalog
+    action: catalog:register
+    input:
+      repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+      catalogInfoPath: /catalog-info.yaml
   output:
     links:
-      - title: Repository
-        url: ${{ steps.publish.output.remoteUrl }}
-      - title: Catalog Entry
-        entityRef: ${{ steps.register.output.entityRef }}
+    - title: Repository
+      url: ${{ steps.publish.output.remoteUrl }}
+    - title: Catalog Entry
+      entityRef: ${{ steps.register.output.entityRef }}
+    - title: Open in Codespaces
+      url: ${{ steps.publish.output.remoteUrl }}/codespaces/new
+      icon: code

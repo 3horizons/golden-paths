@@ -2,65 +2,93 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: h1-infrastructure-provisioning
-  title: "H1: Infrastructure Provisioning"
-  description: |
-    Create a Terraform infrastructure module for Azure with best practices:
+  title: 'H1: Infrastructure Provisioning'
+  description: 'Create a Terraform infrastructure module for Azure with best practices:
+
     private endpoints, managed identity, Key Vault integration, and CI/CD.
-  tags: [terraform, azure, infrastructure, h1-foundation]
+
+    '
+  tags:
+  - terraform
+  - azure
+  - infrastructure
+  - h1-foundation
   annotations:
     backstage.io/techdocs-ref: dir:.
 spec:
-  owner: platform-team
+  owner: group:platform-engineering
   type: infrastructure
   parameters:
-    - title: Infrastructure Configuration
-      required: [name, owner]
-      properties:
-        name:
-          title: Module Name
-          type: string
-          pattern: "^[a-z][a-z0-9-]*$"
-        owner:
-          title: Owner Team
-          type: string
-          ui:field: OwnerPicker
-        azureRegion:
-          title: Azure Region
-          type: string
-          enum: [centralus, eastus]
-          default: centralus
-        environment:
-          title: Environment
-          type: string
-          enum: [dev, staging, prod]
-          default: dev
+  - title: Infrastructure Configuration
+    required:
+    - name
+    - owner
+    properties:
+      name:
+        title: Module Name
+        type: string
+        pattern: ^[a-z][a-z0-9-]*$
+      owner:
+        title: Owner Team
+        type: string
+        ui:field: OwnerPicker
+      azureRegion:
+        title: Azure Region
+        type: string
+        enum:
+        - centralus
+        - eastus
+        default: centralus
+      environment:
+        title: Environment
+        type: string
+        enum:
+        - dev
+        - staging
+        - prod
+        default: dev
+  - title: Repository Settings
+    required:
+    - repoUrl
+    properties:
+      repoUrl:
+        title: Repository Location
+        type: string
+        ui:field: RepoUrlPicker
+        ui:options:
+          allowedHosts:
+          - github.com
   steps:
-    - id: fetch-skeleton
-      name: Fetch Infrastructure Skeleton
-      action: fetch:template
-      input:
-        url: ./skeleton
-        values:
-          name: ${{ parameters.name }}
-          owner: ${{ parameters.owner }}
-          azureRegion: ${{ parameters.azureRegion }}
-          environment: ${{ parameters.environment }}
-    - id: publish
-      name: Publish to GitHub
-      action: publish:github
-      input:
-        allowedHosts: ['github.com']
-        description: "Infrastructure module for ${{ parameters.name }}"
-        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}-infra
-    - id: register
-      name: Register in Catalog
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: /catalog-info.yaml
+  - id: fetch-skeleton
+    name: Fetch Infrastructure Skeleton
+    action: fetch:template
+    input:
+      url: ./skeleton
+      values:
+        name: ${{ parameters.name }}
+        owner: ${{ parameters.owner }}
+        azureRegion: ${{ parameters.azureRegion }}
+        environment: ${{ parameters.environment }}
+  - id: publish
+    name: Publish to GitHub
+    action: publish:github
+    input:
+      description: Infrastructure module for ${{ parameters.name }}
+      repoUrl: ${{ parameters.repoUrl }}
+      defaultBranch: main
+      repoVisibility: private
+  - id: register
+    name: Register in Catalog
+    action: catalog:register
+    input:
+      repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+      catalogInfoPath: /catalog-info.yaml
   output:
     links:
-      - title: Repository
-        url: ${{ steps.publish.output.remoteUrl }}
-      - title: Catalog Entry
-        entityRef: ${{ steps.register.output.entityRef }}
+    - title: Repository
+      url: ${{ steps.publish.output.remoteUrl }}
+    - title: Catalog Entry
+      entityRef: ${{ steps.register.output.entityRef }}
+    - title: Open in Codespaces
+      url: ${{ steps.publish.output.remoteUrl }}/codespaces/new
+      icon: code

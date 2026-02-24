@@ -2,63 +2,120 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: h2-batch-job
-  title: "H2: Batch Processing Job"
-  description: |
-    Create a scheduled batch processing job with retry logic,
+  title: 'H2: Batch Processing Job'
+  description: 'Create a scheduled batch processing job with retry logic,
+
     dead letter queues, and monitoring.
-  tags: [batch, scheduled, processing, h2-enhancement]
+
+    '
+  tags:
+  - batch
+  - scheduled
+  - processing
+  - h2-enhancement
 spec:
-  owner: platform-team
+  owner: group:backend-engineering
   type: batch-job
   parameters:
-    - title: Batch Job Configuration
-      required: [name, owner]
-      properties:
-        name:
-          title: Job Name
-          type: string
-          pattern: "^[a-z][a-z0-9-]*$"
-        owner:
-          title: Owner Team
-          type: string
-          ui:field: OwnerPicker
-        schedule:
-          title: Schedule (cron)
-          type: string
-          default: "0 2 * * *"
-          description: Cron expression for job scheduling
-        language:
-          title: Language
-          type: string
-          enum: [python, nodejs, java]
-          default: python
+  - title: Batch Job Configuration
+    required:
+    - name
+    - owner
+    properties:
+      name:
+        title: Job Name
+        type: string
+        pattern: ^[a-z][a-z0-9-]*$
+      owner:
+        title: Owner Team
+        type: string
+        ui:field: OwnerPicker
+      schedule:
+        title: Schedule (cron)
+        type: string
+        default: 0 2 * * *
+        description: Cron expression for job scheduling
+      language:
+        title: Language
+        type: string
+        enum:
+        - python
+        - nodejs
+        - java
+        default: python
+  - title: Environment & Deployment
+    required:
+    - environment
+    properties:
+      environment:
+        title: Target Environment
+        type: string
+        description: Which environment to deploy to
+        enum:
+        - dev
+        - qa
+        - prod
+        enumNames:
+        - Development
+        - QA / Staging
+        - Production
+        default: dev
+      azureSubscription:
+        title: Azure Subscription ID
+        type: string
+        description: Required for infrastructure provisioning (leave empty for local)
+      azureRegion:
+        title: Azure Region
+        type: string
+        enum:
+        - centralus
+        - eastus
+        enumNames:
+        - Central US
+        - East US
+        default: centralus
+  - title: Repository Settings
+    required:
+    - repoUrl
+    properties:
+      repoUrl:
+        title: Repository Location
+        type: string
+        ui:field: RepoUrlPicker
+        ui:options:
+          allowedHosts:
+          - github.com
   steps:
-    - id: fetch-skeleton
-      name: Fetch Batch Job Skeleton
-      action: fetch:template
-      input:
-        url: ./skeleton
-        values:
-          name: ${{ parameters.name }}
-          owner: ${{ parameters.owner }}
-          schedule: ${{ parameters.schedule }}
-          language: ${{ parameters.language }}
-    - id: publish
-      name: Publish to GitHub
-      action: publish:github
-      input:
-        allowedHosts: ['github.com']
-        description: "Batch job - ${{ parameters.name }}"
-        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
-    - id: register
-      name: Register in Catalog
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: /catalog-info.yaml
+  - id: fetch-skeleton
+    name: Fetch Batch Job Skeleton
+    action: fetch:template
+    input:
+      url: ./skeleton
+      values:
+        name: ${{ parameters.name }}
+        owner: ${{ parameters.owner }}
+        schedule: ${{ parameters.schedule }}
+        language: ${{ parameters.language }}
+  - id: publish
+    name: Publish to GitHub
+    action: publish:github
+    input:
+      description: Batch job - ${{ parameters.name }}
+      repoUrl: ${{ parameters.repoUrl }}
+      defaultBranch: main
+      repoVisibility: private
+  - id: register
+    name: Register in Catalog
+    action: catalog:register
+    input:
+      repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+      catalogInfoPath: /catalog-info.yaml
   output:
     links:
-      - title: Repository
-        url: ${{ steps.publish.output.remoteUrl }}
-      - title: Catalog Entry
-        entityRef: ${{ steps.register.output.entityRef }}
+    - title: Repository
+      url: ${{ steps.publish.output.remoteUrl }}
+    - title: Catalog Entry
+      entityRef: ${{ steps.register.output.entityRef }}
+    - title: Open in Codespaces
+      url: ${{ steps.publish.output.remoteUrl }}/codespaces/new
+      icon: code

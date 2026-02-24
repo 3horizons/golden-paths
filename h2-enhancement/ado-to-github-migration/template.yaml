@@ -3,82 +3,147 @@ kind: Template
 metadata:
   name: ado-to-github-migration
   title: Azure DevOps to GitHub Migration
-  description: |
-    Complete migration toolkit from Azure DevOps to GitHub following the official
+  description: 'Complete migration toolkit from Azure DevOps to GitHub following the
+    official
+
     Microsoft Migration Playbook. Supports repository migration, pipeline conversion,
+
     and hybrid integration.
-  tags: [migration, azure-devops, github, h2-enhancement, recommended]
+
+    '
+  tags:
+  - migration
+  - azure-devops
+  - github
+  - h2-enhancement
+  - recommended
   annotations:
     backstage.io/techdocs-ref: dir:.
   links:
-    - url: https://devblogs.microsoft.com/all-things-azure/azure-devops-to-github-migration-playbook-unlocking-agentic-devops/
-      title: Microsoft Migration Playbook
-      icon: docs
+  - url: https://devblogs.microsoft.com/all-things-azure/azure-devops-to-github-migration-playbook-unlocking-agentic-devops/
+    title: Microsoft Migration Playbook
+    icon: docs
 spec:
-  owner: platform-engineering
+  owner: group:devops-engineering
   type: migration
   parameters:
-    - title: Migration Configuration
-      required: [name, owner, adoOrg]
-      properties:
-        name:
-          title: Migration Project Name
+  - title: Migration Configuration
+    required:
+    - name
+    - owner
+    - adoOrg
+    properties:
+      name:
+        title: Migration Project Name
+        type: string
+        pattern: ^[a-z][a-z0-9-]*$
+        ui:autofocus: true
+      owner:
+        title: Owner Team
+        type: string
+        ui:field: OwnerPicker
+      adoOrg:
+        title: Azure DevOps Organization
+        type: string
+        description: Your Azure DevOps org name
+      adoProject:
+        title: Azure DevOps Project
+        type: string
+      githubOrg:
+        title: GitHub Organization
+        type: string
+      migrationScope:
+        title: Migration Scope
+        type: array
+        items:
           type: string
-          pattern: "^[a-z][a-z0-9-]*$"
-          ui:autofocus: true
-        owner:
-          title: Owner Team
-          type: string
-          ui:field: OwnerPicker
-        adoOrg:
-          title: Azure DevOps Organization
-          type: string
-          description: Your Azure DevOps org name
-        adoProject:
-          title: Azure DevOps Project
-          type: string
-        githubOrg:
-          title: GitHub Organization
-          type: string
-        migrationScope:
-          title: Migration Scope
-          type: array
-          items:
-            type: string
-            enum: [repos, pipelines, boards, artifacts, wiki]
-          default: [repos, pipelines]
-          ui:widget: checkboxes
+          enum:
+          - repos
+          - pipelines
+          - boards
+          - artifacts
+          - wiki
+        default:
+        - repos
+        - pipelines
+        ui:widget: checkboxes
+  - title: Environment & Deployment
+    required:
+    - environment
+    properties:
+      environment:
+        title: Target Environment
+        type: string
+        description: Which environment to deploy to
+        enum:
+        - dev
+        - qa
+        - prod
+        enumNames:
+        - Development
+        - QA / Staging
+        - Production
+        default: dev
+      azureSubscription:
+        title: Azure Subscription ID
+        type: string
+        description: Required for infrastructure provisioning (leave empty for local)
+      azureRegion:
+        title: Azure Region
+        type: string
+        enum:
+        - centralus
+        - eastus
+        enumNames:
+        - Central US
+        - East US
+        default: centralus
+  - title: Repository Settings
+    required:
+    - repoUrl
+    properties:
+      repoUrl:
+        title: Repository Location
+        type: string
+        ui:field: RepoUrlPicker
+        ui:options:
+          allowedHosts:
+          - github.com
   steps:
-    - id: fetch-skeleton
-      name: Fetch Migration Toolkit
-      action: fetch:template
-      input:
-        url: ./skeleton
-        values:
-          name: ${{ parameters.name }}
-          owner: ${{ parameters.owner }}
-          adoOrg: ${{ parameters.adoOrg }}
-          adoProject: ${{ parameters.adoProject }}
-          githubOrg: ${{ parameters.githubOrg }}
-          migrationScope: ${{ parameters.migrationScope }}
-    - id: publish
-      name: Publish to GitHub
-      action: publish:github
-      input:
-        allowedHosts: ['github.com']
-        description: "ADO to GitHub migration - ${{ parameters.name }}"
-        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
-    - id: register
-      name: Register in Catalog
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: /catalog-info.yaml
+  - id: fetch-skeleton
+    name: Fetch Migration Toolkit
+    action: fetch:template
+    input:
+      url: ./skeleton
+      values:
+        name: ${{ parameters.name }}
+        owner: ${{ parameters.owner }}
+        adoOrg: ${{ parameters.adoOrg }}
+        adoProject: ${{ parameters.adoProject }}
+        githubOrg: ${{ parameters.githubOrg }}
+        migrationScope: ${{ parameters.migrationScope }}
+  - id: publish
+    name: Publish to GitHub
+    action: publish:github
+    input:
+      description: ADO to GitHub migration - ${{ parameters.name }}
+      repoUrl: ${{ parameters.repoUrl }}
+      defaultBranch: main
+      repoVisibility: private
+  - id: register
+    name: Register in Catalog
+    action: catalog:register
+    input:
+      repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+      catalogInfoPath: /catalog-info.yaml
   output:
     links:
-      - title: Repository
-        url: ${{ steps.publish.output.remoteUrl }}
-      - title: Catalog Entry
-        entityRef: ${{ steps.register.output.entityRef }}
-      - title: Migration Playbook
-        url: https://devblogs.microsoft.com/all-things-azure/azure-devops-to-github-migration-playbook-unlocking-agentic-devops/
+    - title: Repository
+      url: ${{ steps.publish.output.remoteUrl }}
+    - title: Catalog Entry
+      entityRef: ${{ steps.register.output.entityRef }}
+    - title: Migration Playbook
+      url: https://devblogs.microsoft.com/all-things-azure/azure-devops-to-github-migration-playbook-unlocking-agentic-devops/
+    - title: Open in Codespaces
+      url: ${{ steps.publish.output.remoteUrl }}/codespaces/new
+      icon: code
