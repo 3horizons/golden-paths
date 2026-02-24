@@ -1,0 +1,5 @@
+site_name: ADO to GitHub Migration
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md

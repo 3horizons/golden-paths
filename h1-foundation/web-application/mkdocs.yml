@@ -1,0 +1,5 @@
+site_name: Web Application
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md
