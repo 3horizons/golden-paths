@@ -1,0 +1,128 @@
+name: Publish TechDocs to Azure Blob Storage
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/docs/**"
+      - "**/mkdocs.yml"
+      - "catalog-info.yaml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # Required for OIDC federated authentication
+  contents: read
+
+env:
+  NODE_VERSION: "20"
+  TECHDOCS_CLI_VERSION: "1.8.8"
+
+jobs:
+  publish-techdocs:
+    name: Build & Publish TechDocs
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        template:
+          # H1 Foundation
+          - path: h1-foundation/basic-cicd
+            entity: "template:default/basic-cicd"
+          - path: h1-foundation/documentation-site
+            entity: "template:default/documentation-site"
+          - path: h1-foundation/infrastructure-provisioning
+            entity: "template:default/infrastructure-provisioning"
+          - path: h1-foundation/new-microservice
+            entity: "template:default/new-microservice"
+          - path: h1-foundation/security-baseline
+            entity: "template:default/security-baseline"
+          - path: h1-foundation/web-application
+            entity: "template:default/web-application"
+          # H2 Enhancement
+          - path: h2-enhancement/ado-to-github-migration
+            entity: "template:default/ado-to-github-migration"
+          - path: h2-enhancement/api-gateway
+            entity: "template:default/api-gateway"
+          - path: h2-enhancement/api-microservice
+            entity: "template:default/api-microservice"
+          - path: h2-enhancement/batch-job
+            entity: "template:default/batch-job"
+          - path: h2-enhancement/data-pipeline
+            entity: "template:default/data-pipeline"
+          - path: h2-enhancement/event-driven-microservice
+            entity: "template:default/event-driven-microservice"
+          - path: h2-enhancement/gitops-deployment
+            entity: "template:default/gitops-deployment"
+          - path: h2-enhancement/microservice
+            entity: "template:default/microservice"
+          - path: h2-enhancement/reusable-workflows
+            entity: "template:default/reusable-workflows"
+          # H3 Innovation
+          - path: h3-innovation/ai-evaluation-pipeline
+            entity: "template:default/ai-evaluation-pipeline"
+          - path: h3-innovation/copilot-extension
+            entity: "template:default/copilot-extension"
+          - path: h3-innovation/foundry-agent
+            entity: "template:default/foundry-agent"
+          - path: h3-innovation/mlops-pipeline
+            entity: "template:default/mlops-pipeline"
+          - path: h3-innovation/multi-agent-system
+            entity: "template:default/multi-agent-system"
+          - path: h3-innovation/rag-application
+            entity: "template:default/rag-application"
+          - path: h3-innovation/sre-agent-integration
+            entity: "template:default/sre-agent-integration"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install TechDocs CLI
+        run: npm install -g @techdocs/cli@${{ env.TECHDOCS_CLI_VERSION }}
+
+      - name: Install MkDocs dependencies
+        run: pip install mkdocs-techdocs-core==1.*
+
+      - name: Azure Login (OIDC / Workload Identity)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_TECHDOCS_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Generate TechDocs — ${{ matrix.template.path }}
+        working-directory: ${{ matrix.template.path }}
+        run: |
+          techdocs-cli generate \
+            --no-docker \
+            --source-dir . \
+            --output-dir ./site
+
+      - name: Publish to Azure Blob Storage — ${{ matrix.template.path }}
+        working-directory: ${{ matrix.template.path }}
+        env:
+          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.TECHDOCS_STORAGE_ACCOUNT_NAME }}
+        run: |
+          # Parse entity kind/namespace/name from matrix entry
+          # Entity format: "template:default/basic-cicd"
+          ENTITY="${{ matrix.template.entity }}"
+          KIND=$(echo "$ENTITY" | cut -d: -f1)
+          NAMESPACE_NAME=$(echo "$ENTITY" | cut -d: -f2)
+          NAMESPACE=$(echo "$NAMESPACE_NAME" | cut -d/ -f1)
+          NAME=$(echo "$NAMESPACE_NAME" | cut -d/ -f2)
+
+          techdocs-cli publish \
+            --publisher-type azureBlobStorage \
+            --storage-name "$AZURE_STORAGE_ACCOUNT_NAME" \
+            --entity "$NAMESPACE/$KIND/$NAME" \
+            --directory ./site
+
+      - name: Cleanup generated site
+        if: always()
+        working-directory: ${{ matrix.template.path }}
+        run: rm -rf ./site
