@@ -1,0 +1,8 @@
+site_name: RAG Application
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Architecture: architecture.md
+  - Document Ingestion: ingestion.md

@@ -1,23 +1,25 @@
 # ADO to GitHub Migration
 
-Complete toolkit for migrating from Azure DevOps to GitHub.
+**Horizon:** H2 — Enhancement  
+**Tags:** Migration, Azure DevOps, GitHub, ADO
 
 ## Overview
 
-This Golden Path template provides a pre-configured starting point.
-
-## Getting Started
-
-1. Select this template from the developer portal
-2. Fill in the required parameters
-3. The scaffolder creates a new repo with all files
-4. Open in GitHub Codespaces for instant development
+6-phase guided migration of Azure DevOps repositories, pipelines, and boards to GitHub.
 
 ## What You Get
 
-- Source code skeleton
-- CI/CD pipeline (GitHub Actions)
-- Dockerfile for containerization
-- Kubernetes deployment manifests
-- Pre-configured Codespace (devcontainer.json)
-- Catalog registration in the developer portal
+- Migration script (`migration.sh`) with 6 phases
+- Phase 1: Repository discovery and clone from ADO
+- Phase 2: Branch and tag migration (preserves full git history)
+- Phase 3: Pipeline translation (Azure Pipelines YAML → GitHub Actions)
+- Phase 4: Work item export from ADO Boards → GitHub Issues
+- Phase 5: Branch protection rules and CODEOWNERS migration
+- Phase 6: RHDH catalog registration
+- Migration report (`migration-report.md`) generated after each run
+
+## Quick Start
+
+See the [Usage Guide](usage.md) for step-by-step instructions.
+
+See [Architecture](architecture.md) for technical design decisions.

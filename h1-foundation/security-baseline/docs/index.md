@@ -1,23 +1,25 @@
 # Security Baseline
 
-Azure Key Vault, OPA policies, and security scanning configuration.
+**Horizon:** H1 — Foundation  
+**Tags:** Security, GHAS, SAST, Scanning, Compliance
 
 ## Overview
 
-This Golden Path template provides a pre-configured starting point.
-
-## Getting Started
-
-1. Select this template from the developer portal
-2. Fill in the required parameters
-3. The scaffolder creates a new repo with all files
-4. Open in GitHub Codespaces for instant development
+Apply mandatory security controls to any repository: secret scanning, SAST, dependency scanning, container scanning, and branch protection.
 
 ## What You Get
 
-- Source code skeleton
-- CI/CD pipeline (GitHub Actions)
-- Dockerfile for containerization
-- Kubernetes deployment manifests
-- Pre-configured Codespace (devcontainer.json)
-- Catalog registration in the developer portal
+- GitHub Advanced Security (GHAS) workflow: CodeQL SAST
+- Dependency scanning: Dependabot + `npm audit` / `pip audit`
+- Container scanning: Trivy on every Docker build
+- Secret scanning: `detect-secrets` pre-commit hook + GitHub secret scanning enabled
+- `.pre-commit-config.yaml` with 14 hooks (format, lint, secrets, YAML, Terraform)
+- Branch protection rules: require PR, require status checks, no force-push
+- CODEOWNERS file template
+- Security policy (`SECURITY.md`)
+
+## Quick Start
+
+See the [Usage Guide](usage.md) for step-by-step instructions.
+
+See [Architecture](architecture.md) for technical design decisions.

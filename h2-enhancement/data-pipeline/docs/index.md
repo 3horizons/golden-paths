@@ -1,23 +1,24 @@
 # Data Pipeline
 
-Python ETL pipeline with Azure Data services integration.
+**Horizon:** H2 — Enhancement  
+**Tags:** Data Pipeline, Azure Data Factory, Airflow, ETL
 
 ## Overview
 
-This Golden Path template provides a pre-configured starting point.
-
-## Getting Started
-
-1. Select this template from the developer portal
-2. Fill in the required parameters
-3. The scaffolder creates a new repo with all files
-4. Open in GitHub Codespaces for instant development
+Azure Data Factory or Apache Airflow data pipeline with ingestion, transformation, and load stages.
 
 ## What You Get
 
-- Source code skeleton
-- CI/CD pipeline (GitHub Actions)
-- Dockerfile for containerization
-- Kubernetes deployment manifests
-- Pre-configured Codespace (devcontainer.json)
-- Catalog registration in the developer portal
+- Pipeline definition (ADF JSON or Airflow DAG)
+- Ingestion stage: Azure Blob / ADLS Gen2 → staging
+- Transformation stage: dbt models or Spark jobs
+- Load stage: Azure Synapse / PostgreSQL
+- Data quality checks (Great Expectations profiles)
+- GitHub Actions: validate pipeline on PR, deploy on merge
+- Catalog registration with Data entity type
+
+## Quick Start
+
+See the [Usage Guide](usage.md) for step-by-step instructions.
+
+See [Architecture](architecture.md) for technical design decisions.

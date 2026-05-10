@@ -1,0 +1,8 @@
+site_name: AI Model Evaluation Pipeline
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Architecture: architecture.md
+  - Responsible AI Evaluations: responsible-ai.md

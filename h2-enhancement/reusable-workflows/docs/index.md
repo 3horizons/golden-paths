@@ -1,23 +1,25 @@
-# Reusable Workflows
+# Reusable GitHub Actions Workflows
 
-GitHub Actions reusable workflows for build, security, and deploy.
+**Horizon:** H2 — Enhancement  
+**Tags:** GitHub Actions, Reusable Workflows, CI/CD, DevOps
 
 ## Overview
 
-This Golden Path template provides a pre-configured starting point.
-
-## Getting Started
-
-1. Select this template from the developer portal
-2. Fill in the required parameters
-3. The scaffolder creates a new repo with all files
-4. Open in GitHub Codespaces for instant development
+Library of reusable GitHub Actions workflow templates for build, security scanning, container publish, and Kubernetes deploy.
 
 ## What You Get
 
-- Source code skeleton
-- CI/CD pipeline (GitHub Actions)
-- Dockerfile for containerization
-- Kubernetes deployment manifests
-- Pre-configured Codespace (devcontainer.json)
-- Catalog registration in the developer portal
+- `.github/workflows/` reusable workflow library
+- `build-and-test.yml` — generic build, unit test, coverage report
+- `container-build-push.yml` — Docker build, Trivy scan, push to GHCR/ACR
+- `deploy-to-aks.yml` — `helm upgrade --install` to AKS cluster
+- `terraform-validate.yml` — fmt, validate, plan (no apply)
+- `security-scan.yml` — CodeQL, Dependabot, secret scan
+- Caller workflow examples for quick adoption
+- Catalog registration
+
+## Quick Start
+
+See the [Usage Guide](usage.md) for step-by-step instructions.
+
+See [Architecture](architecture.md) for technical design decisions.

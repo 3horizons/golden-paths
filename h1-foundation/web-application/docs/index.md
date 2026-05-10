@@ -1,23 +1,25 @@
 # Web Application
 
-React/Vite web application with TypeScript and Docker.
+**Horizon:** H1 — Foundation  
+**Tags:** React, Node.js, Full-stack, Docker, Kubernetes
 
 ## Overview
 
-This Golden Path template provides a pre-configured starting point.
-
-## Getting Started
-
-1. Select this template from the developer portal
-2. Fill in the required parameters
-3. The scaffolder creates a new repo with all files
-4. Open in GitHub Codespaces for instant development
+Full-stack web application with React frontend, Node.js API, Docker Compose for local dev, and Kubernetes deployment.
 
 ## What You Get
 
-- Source code skeleton
-- CI/CD pipeline (GitHub Actions)
-- Dockerfile for containerization
-- Kubernetes deployment manifests
-- Pre-configured Codespace (devcontainer.json)
-- Catalog registration in the developer portal
+- React 18 frontend (Vite, TypeScript, Tailwind CSS)
+- Node.js Express API with structured logging
+- Docker Compose for local development (`docker-compose.yml`)
+- Kubernetes manifests for frontend (`Deployment`, `Service`, `Ingress`) and API
+- GitHub Actions CI/CD: lint → test → build → container push → deploy
+- Environment-specific configuration: dev, staging, prod
+- Pre-configured GitHub Codespace (Node 20 + browser preview)
+- Catalog registration with TechDocs
+
+## Quick Start
+
+See the [Usage Guide](usage.md) for step-by-step instructions.
+
+See [Architecture](architecture.md) for technical design decisions.

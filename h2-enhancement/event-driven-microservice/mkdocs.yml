@@ -3,3 +3,5 @@ plugins:
   - techdocs-core
 nav:
   - Home: index.md
+  - Usage: usage.md
+  - Architecture: architecture.md

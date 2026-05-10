@@ -143,7 +143,24 @@ PY
   PASS=$((PASS+1))
 fi
 
-# 3. Summary -------------------------------------------------------------------
+# 3. TechDocs presence checks --------------------------------------------------
+echo ""
+echo "==> Validating TechDocs presence (mkdocs.yml + docs/)..."
+while IFS= read -r tpl; do
+  template_dir="$(dirname "$tpl")"
+  name="$(basename "$template_dir")"
+  echo "  • $name"
+
+  [[ -f "$template_dir/mkdocs.yml" ]] && check "mkdocs.yml exists" "true" || check "mkdocs.yml exists" "false"
+  [[ -f "$template_dir/docs/index.md" ]] && check "docs/index.md exists" "true" || check "docs/index.md exists" "false"
+  [[ -f "$template_dir/docs/usage.md" ]] && check "docs/usage.md exists" "true" || check "docs/usage.md exists" "false"
+  grep -q "techdocs-core" "$template_dir/mkdocs.yml" 2>/dev/null && check "mkdocs.yml has techdocs-core plugin" "true" || check "mkdocs.yml has techdocs-core plugin" "false"
+  [[ -f "$template_dir/skeleton/mkdocs.yml" ]] && check "skeleton has mkdocs.yml" "true" || check "skeleton has mkdocs.yml" "false"
+  [[ -f "$template_dir/skeleton/docs/index.md" ]] && check "skeleton has docs/index.md" "true" || check "skeleton has docs/index.md" "false"
+
+done < <(find h1-foundation h2-enhancement h3-innovation -name 'template.yaml' | sort)
+
+# 4. Summary -------------------------------------------------------------------
 echo ""
 echo "============================================================================"
 echo "Results: $PASS passed, $FAIL failed"

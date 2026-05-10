@@ -1,0 +1,8 @@
+site_name: SRE Agent Integration
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Architecture: architecture.md
+  - Writing Runbooks for the SRE Agent: runbooks.md

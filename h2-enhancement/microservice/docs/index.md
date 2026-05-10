@@ -1,23 +1,25 @@
-# Microservice
+# Full Microservice
 
-FastAPI production microservice with observability and health checks.
+**Horizon:** H2 — Enhancement  
+**Tags:** Microservice, Istio, Jaeger, Observability, Kubernetes
 
 ## Overview
 
-This Golden Path template provides a pre-configured starting point.
-
-## Getting Started
-
-1. Select this template from the developer portal
-2. Fill in the required parameters
-3. The scaffolder creates a new repo with all files
-4. Open in GitHub Codespaces for instant development
+Complete production microservice with service mesh integration (Istio), distributed tracing (Jaeger), and full observability stack.
 
 ## What You Get
 
-- Source code skeleton
-- CI/CD pipeline (GitHub Actions)
-- Dockerfile for containerization
-- Kubernetes deployment manifests
-- Pre-configured Codespace (devcontainer.json)
-- Catalog registration in the developer portal
+- Go (Gin) or Node.js (Fastify) service with OpenTelemetry instrumentation
+- Istio `VirtualService`, `DestinationRule`, `PeerAuthentication` (mTLS)
+- Jaeger tracing with trace context propagation
+- Prometheus metrics (`/metrics`) with custom counters, histograms
+- Grafana dashboard JSON for the service's RED metrics
+- Kubernetes manifests with resource requests/limits, PodDisruptionBudget
+- GitHub Actions CI/CD with Trivy container scan
+- Catalog registration with techdocs + API spec
+
+## Quick Start
+
+See the [Usage Guide](usage.md) for step-by-step instructions.
+
+See [Architecture](architecture.md) for technical design decisions.

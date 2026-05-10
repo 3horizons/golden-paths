@@ -1,0 +1,5 @@
+site_name: Three Horizons Golden Paths
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md

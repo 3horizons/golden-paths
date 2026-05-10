@@ -1,0 +1,7 @@
+site_name: GitHub Copilot Extension
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Architecture: architecture.md

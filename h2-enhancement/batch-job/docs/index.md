@@ -1,23 +1,24 @@
 # Batch Job
 
-Python batch processing with Kubernetes CronJob scheduling.
+**Horizon:** H2 — Enhancement  
+**Tags:** CronJob, Kubernetes, Batch, Scheduling
 
 ## Overview
 
-This Golden Path template provides a pre-configured starting point.
-
-## Getting Started
-
-1. Select this template from the developer portal
-2. Fill in the required parameters
-3. The scaffolder creates a new repo with all files
-4. Open in GitHub Codespaces for instant development
+Kubernetes CronJob for scheduled batch processing with retry logic, dead-letter queue, and alerting.
 
 ## What You Get
 
-- Source code skeleton
-- CI/CD pipeline (GitHub Actions)
-- Dockerfile for containerization
-- Kubernetes deployment manifests
-- Pre-configured Codespace (devcontainer.json)
-- Catalog registration in the developer portal
+- Kubernetes `CronJob` manifest with configurable schedule
+- Python batch processor with retry logic (`tenacity`)
+- Dead-letter queue integration (Azure Service Bus)
+- Prometheus metrics: job duration, success/failure rate
+- Alertmanager alert: job failure for 2+ consecutive runs
+- GitHub Actions: CI for batch code + CD for K8s manifest
+- Catalog registration
+
+## Quick Start
+
+See the [Usage Guide](usage.md) for step-by-step instructions.
+
+See [Architecture](architecture.md) for technical design decisions.

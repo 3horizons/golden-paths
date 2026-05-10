@@ -1,0 +1,8 @@
+site_name: Multi-Agent System
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Architecture: architecture.md
+  - Orchestration Patterns: patterns.md

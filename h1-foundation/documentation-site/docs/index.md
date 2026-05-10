@@ -1,23 +1,23 @@
 # Documentation Site
 
-MkDocs site with TechDocs integration for the developer portal.
+**Horizon:** H1 — Foundation  
+**Tags:** Documentation, MkDocs, TechDocs, Backstage
 
 ## Overview
 
-This Golden Path template provides a pre-configured starting point.
-
-## Getting Started
-
-1. Select this template from the developer portal
-2. Fill in the required parameters
-3. The scaffolder creates a new repo with all files
-4. Open in GitHub Codespaces for instant development
+Creates a MkDocs-based documentation site with TechDocs integration, auto-published to the Developer Hub.
 
 ## What You Get
 
-- Source code skeleton
-- CI/CD pipeline (GitHub Actions)
-- Dockerfile for containerization
-- Kubernetes deployment manifests
-- Pre-configured Codespace (devcontainer.json)
-- Catalog registration in the developer portal
+- MkDocs project with Material theme (`mkdocs.yml`)
+- Starter documentation structure (`docs/` with index, architecture, and API pages)
+- GitHub Actions workflow: `build-docs.yml` (runs `mkdocs build --strict`)
+- GitHub Actions workflow: `publish-docs.yml` (publishes to GitHub Pages)
+- TechDocs annotation in `catalog-info.yaml` so docs appear in Developer Hub
+- Pre-configured GitHub Codespace for live documentation editing
+
+## Quick Start
+
+See the [Usage Guide](usage.md) for step-by-step instructions.
+
+See [Architecture](architecture.md) for technical design decisions.

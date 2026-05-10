@@ -1,23 +1,23 @@
 # Basic CI/CD Pipeline
 
-GitHub Actions configuration for automated build, test, and deploy workflows.
+**Horizon:** H1 — Foundation  
+**Tags:** CI/CD, GitHub Actions, DevOps
 
 ## Overview
 
-This Golden Path template provides a pre-configured starting point.
-
-## Getting Started
-
-1. Select this template from the developer portal
-2. Fill in the required parameters
-3. The scaffolder creates a new repo with all files
-4. Open in GitHub Codespaces for instant development
+Pre-configured GitHub Actions pipeline for automated build, test, lint, and deploy workflows.
 
 ## What You Get
 
-- Source code skeleton
-- CI/CD pipeline (GitHub Actions)
-- Dockerfile for containerization
-- Kubernetes deployment manifests
-- Pre-configured Codespace (devcontainer.json)
-- Catalog registration in the developer portal
+- GitHub Actions workflow (build, test, lint, release)
+- Docker multi-stage `Dockerfile`
+- Kubernetes `Deployment`, `Service`, `HorizontalPodAutoscaler`
+- Pre-commit hooks configuration (`.pre-commit-config.yaml`)
+- Pre-configured GitHub Codespace (`devcontainer.json`)
+- Component entry in the Developer Hub catalog
+
+## Quick Start
+
+See the [Usage Guide](usage.md) for step-by-step instructions.
+
+See [Architecture](architecture.md) for technical design decisions.

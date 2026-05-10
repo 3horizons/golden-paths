@@ -1,0 +1,8 @@
+site_name: AI Foundry Agent
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Architecture: architecture.md
+  - Defining Agent Tools: tools.md

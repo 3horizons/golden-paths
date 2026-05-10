@@ -1,0 +1,6 @@
+site_name: "${{ values.component_id }}"
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md
+  - API Reference: api.md

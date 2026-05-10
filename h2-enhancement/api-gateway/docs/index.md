@@ -1,23 +1,24 @@
 # API Gateway
 
-Express/TypeScript gateway with rate limiting and authentication.
+**Horizon:** H2 — Enhancement  
+**Tags:** API Gateway, APIM, Azure, Rate Limiting
 
 ## Overview
 
-This Golden Path template provides a pre-configured starting point.
-
-## Getting Started
-
-1. Select this template from the developer portal
-2. Fill in the required parameters
-3. The scaffolder creates a new repo with all files
-4. Open in GitHub Codespaces for instant development
+Azure API Management (APIM) gateway configuration with rate limiting, auth, caching, and developer portal.
 
 ## What You Get
 
-- Source code skeleton
-- CI/CD pipeline (GitHub Actions)
-- Dockerfile for containerization
-- Kubernetes deployment manifests
-- Pre-configured Codespace (devcontainer.json)
-- Catalog registration in the developer portal
+- Azure API Management Terraform module (`terraform/apim/`)
+- API policy XML templates (rate limiting, JWT validation, IP filtering)
+- OpenAPI spec import configuration
+- Developer portal customization
+- GitHub Actions: `apim-ci.yml` (validate policies) + `apim-cd.yml` (deploy)
+- Monitoring: Azure Monitor alerts for quota, latency, error rate
+- Catalog registration with API entity type
+
+## Quick Start
+
+See the [Usage Guide](usage.md) for step-by-step instructions.
+
+See [Architecture](architecture.md) for technical design decisions.
