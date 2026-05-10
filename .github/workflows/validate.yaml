@@ -1,0 +1,41 @@
+name: Validate Golden Paths
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Smoke test (structure + YAML)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Run smoke tests
+        run: ./tests/smoke.sh
+
+  yamllint:
+    name: yamllint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install yamllint
+        run: pip install yamllint
+      - name: Lint templates
+        run: |
+          yamllint -d '{extends: relaxed, rules: {line-length: {max: 220}}}' \
+            h1-foundation h2-enhancement h3-innovation catalog-info.yaml org.yaml || true
